@@ -1,0 +1,155 @@
+<p># 
+    Assignment 1: Rendering Basics with PyTorch3D</p>
+<hr>
+<h2 id="1-practicing-with-cameras">1. Practicing with Cameras</h2>
+<blockquote>
+<p>Submission : On your webpage, include a gif with your dolly zoom effect.</p>
+</blockquote>
+<h3 id="1-1-360-degree-renders">1.1. 360-degree Renders</h3>
+<p><img src="results/cow_360.gif" alt="img" title="Cow 360 Rendering"></p>
+<blockquote>
+<p>Submission: On your webpage, you should include a gif that shows the cow mesh from many continuously changing viewpoints.</p>
+</blockquote>
+<h3 id="1-2-re-creating-the-dolly-zoom">1.2 Re-creating the Dolly Zoom</h3>
+<p><img src="results/dolly.gif" alt="img" title="Dolly Zoom"></p>
+<hr>
+<h2 id="2-practicing-with-meshes">2. Practicing with Meshes</h2>
+<blockquote>
+<p><strong>Submission</strong> : On your webpage, show a 360-degree gif animation of your cube. Also, list how many vertices and (triangle) faces your mesh should have.</p>
+</blockquote>
+<h3 id="2-1-constructing-a-tetrahedron">2.1 Constructing a Tetrahedron</h3>
+<p><img src="results/tetrahedron_360.gif" alt="img" title="Tetrahedron"></p>
+<p><strong>Tetrahedron:</strong></p>
+<p><em>Verticles: 4</em></p>
+<p><em>Faces: 4</em></p>
+<blockquote>
+<p>Submission : On your webpage, show a 360-degree gif animation of your tetrahedron. Also, list how many vertices and (triangle) faces your mesh should have.</p>
+</blockquote>
+<h3 id="2-2-constructing-a-cube">2.2 Constructing a Cube</h3>
+<p><img src="results/cube_360.gif" alt="img"></p>
+<p><strong>Cube:</strong></p>
+<p><em>Verticles: 8</em></p>
+<p><em>Faces: 12</em></p>
+<hr>
+<h2 id="3-re-texturing-a-mesh">3. Re-texturing a mesh</h2>
+<blockquote>
+<p>Submission : In your submission, describe your choice of <code>color1</code> and <code>color2</code>, and include a gif of the rendered mesh.</p>
+</blockquote>
+<p><img src="results/cow_retexture_360.gif" alt="img" title="Cow Retexture"></p>
+<p>Color1 is mix of Red and Green: color1=torch.tensor([1,1,0])</p>
+<p>Color2 is mix of Green and Blue: color2=torch.tensor([0,1,1])</p>
+<hr>
+<h2 id="4-camera-transformations">4. Camera Transformations</h2>
+<blockquote>
+<p>Submission : In your report, describe in words what R_relative and T_relative should be doing and include the rendering produced by your choice of R_relative and T_relative.</p>
+</blockquote>
+<p>R_relative and T_relative are transforming the pose with respect to the frame w/t R_0 and T_0</p>
+<p><strong>Transformation-1</strong></p>
+<p><img src="results/cow_transformed_1.jpg" alt="img"></p>
+<p>This is a rotation of around 90 degress in &#39;z&#39; axis</p>
+<pre><code class="lang-python"><span class="hljs-attr">rotation</span>= R.from_euler(<span class="hljs-string">'z'</span>,-<span class="hljs-number">90</span>,degrees=<span class="hljs-literal">True</span>)
+<span class="hljs-attr">R_rel</span>=rotation.as_matrix().tolist()
+<span class="hljs-attr">T_rel</span>=[<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]
+</code></pre>
+<ul>
+<li>R_rel: [[0, 1, 0], [-1, 0, 0], [0, 0, 1]]</li>
+<li>T_rel=[0,0,0]</li>
+</ul>
+<p><strong>Transformation-2</strong></p>
+<p><img src="results/cow_transformed_2.jpg" alt="img"></p>
+<p>This is just a pure translation of 3 units around &#39;z&#39; axis</p>
+<ul>
+<li>R_rel=[[1,0,0],[0,1,0],[0,0,1]]</li>
+<li>T_rel=[0,0,1]</li>
+</ul>
+<p><strong>Transformation-3</strong></p>
+<p><img src="results/cow_transformed_3.jpg" alt="img"></p>
+<p>This is achieved by a slight rotation of 5 degrees around &quot;y&quot; axis and translation by 0.2 units in &quot;x&quot; axis</p>
+<pre><code class="lang-python"><span class="hljs-type">rotation</span> = R.from_euler('y', <span class="hljs-number">5</span>, degrees = True)  
+        R_rel = <span class="hljs-type">rotation</span>.as_matrix().tolist()
+        T_rel = [<span class="hljs-number">0.2</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>]
+</code></pre>
+<ul>
+<li>R_rel=[[0.9961946980917457, 0.0, 0.08715574274765818], [0.0, 1.0000000000000002, 0.0], [-0.08715574274765818, 0.0, 0.9961946980917457]]</li>
+<li>T_rel=[0.2,0,0]</li>
+</ul>
+<p><strong>Transformation-4</strong></p>
+<p><img src="results/cow_transformed_4.jpg" alt="img"></p>
+<p>This is achieved by rotating by 90 degress along &quot;y&quot; axis and then translating to first compensate for original translation and then translated with respect to the new rotated coordinate system by 3 units</p>
+<pre><code class="lang-python">      <span class="hljs-type">rotation</span> = R.from_euler('Y', <span class="hljs-number">90</span>, degrees = True)  
+        R_rel = <span class="hljs-type">rotation</span>.as_matrix().tolist()
+        # According to the rotated frame
+        T_rel = [<span class="hljs-number">-3</span>, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>]
+</code></pre>
+<ul>
+<li>R_rel=[[0, 0.0, 1.0], [0.0, 1.0, 0.0], [-1.0, 0.0, 0]]</li>
+<li>T_rel=[-3,0,3]</li>
+</ul>
+<hr>
+<h2 id="5-rendering-generic-3d-representations">5. Rendering Generic 3D Representations</h2>
+<h3 id="5-1-rendering-point-clouds-from-rgb-d-images">5.1 Rendering Point Clouds from RGB-D Images</h3>
+<p><img src="results/plants_360.gif" alt="img" title="Generated Point Clouds "></p>
+<p>From left to right: generated point cloud renderings from Image1, Image2 and Combined by the union of both</p>
+<blockquote>
+<p>Submission : In your submission, include a gif of each of these point clouds mentioned above side-by-side</p>
+</blockquote>
+<h3 id="5-2-parametric-functions">5.2 Parametric Functions</h3>
+<blockquote>
+<p>Submission :</p>
+<ul>
+<li>In your writeup, include a 360-degree gif of your torus mesh, and make sure the hole is visible. (10 points)</li>
+<li>In addition, discuss some of the tradeoffs between rendering as a mesh vs a point cloud. Things to consider might include rendering speed, rendering quality, ease of use, memory usage, etc. (5 points)</li>
+<li>Include a 360-degree gif on any new object of your choice. This object can be different from what you used in 5.2 (5 points)</li>
+</ul>
+</blockquote>
+<h3 id="torus-point-cloud-parametric">Torus Point Cloud - Parametric</h3>
+<p><img src="results/parametric_torus_360.gif" alt="img" title="Parametric Torus"></p>
+<h3 id="cylinder-point-cloud-new-object-parametric">Cylinder Point Cloud(New Object) - Parametric</h3>
+<p><img src="results/parametric_cylinder_360.gif" alt="img" title="Parametric Cylinder"></p>
+<blockquote>
+<p> Submission :</p>
+<ul>
+<li>In your writeup, include a 360-degree gif of your torus point cloud, and make sure the hole is visible. You may choose to texture your point cloud however you wish. (10 points)</li>
+<li>In your writeup, include a 360-degree gif of your torus point cloud, and make sure the hole is visible. You may choose to texture your point cloud however you wish. (10 points)</li>
+</ul>
+</blockquote>
+<h3 id="5-3-implicit-surfaces">5.3 Implicit Surfaces</h3>
+<h3 id="torus-point-cloud-implicit">Torus Point Cloud - Implicit</h3>
+<p><img src="results/implicit_torus_360.gif" alt="img" title="Parametric Torus"></p>
+<p><strong>Trade-offs Between Rendering as a Mesh vs. a Point Cloud:</strong></p>
+<ol>
+<li><strong>Visual Quality:</strong><ul>
+<li><strong>Mesh:</strong> Provides smoother surfaces and cleaner visuals due to connected geometry.</li>
+<li><strong>Point Cloud:</strong> Can display visible gaps if not dense enough, leading to lower visual quality.</li>
+</ul>
+</li>
+<li><strong>Rendering Speed:</strong><ul>
+<li><strong>Mesh:</strong> Generally slower to render because of the complexity in handling surface connectivity.</li>
+<li><strong>Point Cloud:</strong> Faster to render since it&#39;s just a collection of discrete points without connectivity.</li>
+</ul>
+</li>
+<li><strong>Memory Usage:</strong><ul>
+<li><strong>Mesh:</strong> Consumes more memory due to the additional data required for storing connectivity and surface information.</li>
+<li><strong>Point Cloud:</strong> More memory-efficient as it only stores the positions of individual points.</li>
+</ul>
+</li>
+</ol>
+<h3 id="cylinder-point-cloud-implicit">Cylinder Point Cloud - Implicit</h3>
+<p><img src="results/implicit_cylinder_360.gif" alt="img" title="Parametric Torus"></p>
+<hr>
+<h2 id="6-do-something-fun">6. Do Something Fun</h2>
+<blockquote>
+<p>Submission: Include a creative use of the tools in this assignment on your webpage!</p>
+</blockquote>
+<h3 id="-seasons-on-a-tree-"><strong><em>Seasons on a Tree</em></strong></h3>
+<p><em>I aimed to illustrate how a tree transforms across different seasons: Summer, Autumn, and Winter.</em></p>
+<p><img src="results/tree_360.gif" alt="img"></p>
+<p><strong>Procedure:</strong> I downloaded the object file from <a href="https://free3d.com/3d-model/realistic-tree-02-134612.html">Tree Obj Source</a> post which I changed the texture of the tree dependending on the rotation angle.</p>
+<hr>
+<h2 id="-extra-credit-7-sampling-points-on-meshes">(Extra Credit) 7. Sampling Points on Meshes</h2>
+<blockquote>
+<p>Submission : Render each pointcloud and the original cow mesh side-by-side, and include the gif in your writeup.</p>
+</blockquote>
+<p><img src="results/cow_mesh_points.gif" alt="img"></p>
+<p>From left to right: Original Cow mesh, Generated points with sample size: [10,100,1000,10000] respectively</p>
+<p><em>The rendering generated from 10000 points looks very similar to the original mesh</em></p>
