@@ -46,8 +46,6 @@ elifargs.run =="q_12":
 
 ## 2. Practicing with Meshes
 
-> **Submission** : On your webpage, show a 360-degree gif animation of your cube. Also, list how many vertices and (triangle) faces your mesh should have.
-
 ### 2.1 Constructing a Tetrahedron
 
 ![img](results/tetrahedron_360.gif "Tetrahedron")
@@ -189,7 +187,7 @@ From left to right: generated point cloud renderings from Image1, Image2 and Com
 
 ---
 
-## (Extra Credit) 7. Sampling Points on Meshes
+## 7. Sampling Points on Meshes
 
 ![img](results/cow_mesh_points.gif)
 
